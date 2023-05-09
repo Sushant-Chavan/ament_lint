@@ -212,7 +212,8 @@ def main(argv=sys.argv[1:]):
         print('found compilation database for package "%s"...' % package_name)
         (source_files, output) = invoke_clang_tidy(compilation_db)
         files += source_files
-        outputs.append(output)
+        if output:
+            outputs.append(output)
     pool.close()
     pool.join()
 
