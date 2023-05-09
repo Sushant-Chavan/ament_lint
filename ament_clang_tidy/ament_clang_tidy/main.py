@@ -206,13 +206,16 @@ def main(argv=sys.argv[1:]):
 
     files = []
     outputs = []
+    detected_issues = False
     for compilation_db in compilation_dbs:
         package_dir = os.path.dirname(compilation_db)
         package_name = os.path.basename(package_dir)
         print('found compilation database for package "%s"...' % package_name)
         (source_files, output) = invoke_clang_tidy(compilation_db)
         files += source_files
-        outputs.append(output)
+        if output:
+            outputs.append(output)
+            detected_issues = True
     pool.close()
     pool.join()
 
@@ -266,6 +269,8 @@ def main(argv=sys.argv[1:]):
             os.makedirs(path)
         with open(args.xunit_file, 'w') as f:
             f.write(xml)
+    
+    return 2 if detected_issues else 0
 
 
 def find_executable(file_names):
