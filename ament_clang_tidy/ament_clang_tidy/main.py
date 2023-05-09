@@ -162,6 +162,9 @@ def main(argv=sys.argv[1:]):
         def is_unittest_source(package, file_path):
             return ('%s/test/' % package) in file_path
 
+        def is_ros_auto_generated_file(file_path):
+            return "rosidl_" in file_path
+
         def start_subprocess(full_cmd):
             output = ''
             try:
@@ -189,6 +192,10 @@ def main(argv=sys.argv[1:]):
             # exclude unit test sources from being checked by clang-tidy
             # because gtest macros are problematic
             if is_unittest_source(package_name, item['file']):
+                continue
+
+            # exclude files that were auto-generated for the ROS interfaces
+            if is_ros_auto_generated_file(item['file']):
                 continue
 
             files.append(item['file'])
