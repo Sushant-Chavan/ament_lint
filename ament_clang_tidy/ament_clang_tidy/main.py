@@ -87,6 +87,10 @@ def main(argv=sys.argv[1:]):
     parser.add_argument(
         '--xunit-file',
         help='Generate a xunit compliant XML file')
+    parser.add_argument(
+        '--ignore-ament-ignore',
+        action='store_true',
+        help='Ignores any "AMENT_IGNORE" files when searching for compile_commands.json')
     args = parser.parse_args(argv)
 
     if args.config_file is not None and not os.path.exists(args.config_file):
@@ -97,7 +101,7 @@ def main(argv=sys.argv[1:]):
     if args.xunit_file:
         start_time = time.time()
 
-    compilation_dbs = get_compilation_db_files(args.paths)
+    compilation_dbs = get_compilation_db_files(args.paths, args.ignore_ament_ignore)
 
     if args.packages_select is not None:
         # Handle the case of a quoted list of space separated package names
@@ -288,12 +292,12 @@ def find_executable(file_names):
     return None
 
 
-def get_compilation_db_files(paths):
+def get_compilation_db_files(paths, ignore_ament_ignore):
     files = []
     for path in paths:
         if os.path.isdir(path):
             for dirpath, dirnames, filenames in os.walk(path):
-                if 'AMENT_IGNORE' in dirnames + filenames:
+                if not ignore_ament_ignore and 'AMENT_IGNORE' in dirnames + filenames:
                     dirnames[:] = []
                     continue
                 # ignore folder starting with . or _
