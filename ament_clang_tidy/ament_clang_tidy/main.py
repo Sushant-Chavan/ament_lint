@@ -88,6 +88,10 @@ def main(argv=sys.argv[1:]):
         '--xunit-file',
         help='Generate a xunit compliant XML file')
     parser.add_argument(
+        '--clang-tidy-path',
+        default=None,
+        help='Optional path to the clang-tidy-binary')
+    parser.add_argument(
         '--ignore-ament-ignore',
         action='store_true',
         help='Ignores any "AMENT_IGNORE" files when searching for compile_commands.json')
@@ -119,7 +123,7 @@ def main(argv=sys.argv[1:]):
         'clang-tidy-11',
         'clang-tidy-6.0',
     ]
-    clang_tidy_bin = find_executable(bin_names)
+    clang_tidy_bin = args.clang_tidy_path if args.clang_tidy_path else find_executable(bin_names)
     if not clang_tidy_bin:
         print('Could not find %s executable' %
               ' / '.join(["'%s'" % n for n in bin_names]), file=sys.stderr)
