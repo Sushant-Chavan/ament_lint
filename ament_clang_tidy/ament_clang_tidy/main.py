@@ -137,7 +137,7 @@ def main(argv=sys.argv[1:]):
 
         cmd = [clang_tidy_bin,
                '-p', package_dir,
-               "-extra-arg=-std=c++17"]
+               "-extra-arg=-std=c++20"]
 
         if args.config_file is not None:
             with open(args.config_file, 'r') as h:
